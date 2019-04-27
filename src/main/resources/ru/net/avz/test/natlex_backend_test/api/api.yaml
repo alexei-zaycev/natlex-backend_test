@@ -1,0 +1,259 @@
+openapi: 3.0.0
+info:
+  title: Natlex Backend Test API
+  description: документация по Natlex Backend Test RESTful API
+  version: 1.0.0
+  contact:
+    email: alexei.zaycev@ya.ru
+tags:
+  - name: common
+    description: ресурсы общего назначения
+  - name: jobs
+    description: ресурсы для работы с задачами
+  - name: sections
+    description: ресурсы для работы с секциями
+components:
+  schemas:
+    JobId:
+      description: уникальный идентификатор задачи
+      type: string
+      format: uuid
+      example: 'b3c2abc5-eb58-42bc-8b56-4f1c6a6de0f7'
+    Job:
+      description: задача
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/JobId'
+        sections:
+          $ref: '#/components/schemas/SectionsArray'
+      required: 
+        - id
+        - sections
+    JobsArray:
+      description: множество задач
+      type: array
+      items:
+        $ref: '#/components/schemas/Job'
+    SectionName:
+      description: имя секции
+      type: string
+      example: 'Section 1'
+    Section:  
+      description: секция
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/SectionName'
+        geologicalClasses:
+          $ref: '#/components/schemas/GeologicalClassesArray'
+      required: 
+        - name
+        - geologicalClasses
+    SectionsArray:
+      description: множество секций
+      type: array
+      items:
+        $ref: '#/components/schemas/Section'
+    GeologicalClassName:
+      description: имя геологического класса
+      type: string
+      example: 'Geo Class 1'
+    GeologicalClassCode:
+      description: код геологического класса
+      type: string
+      example: 'GC1'
+    GeologicalClass:  
+      description: геологический класс
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/GeologicalClassName'
+        code:
+          $ref: '#/components/schemas/GeologicalClassCode'
+      required: 
+        - name
+        - code
+    GeologicalClassesArray:
+      description: множество геологических классов
+      type: array
+      items:
+        $ref: '#/components/schemas/GeologicalClass'
+  parameters:
+    JobId:
+      description: уникальный идентификатор задачи
+      name: jobId
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/JobId'
+    SectionName:
+      description: имя секции
+      name: sectionName
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/SectionName'
+    GeologicalClassName:
+      description: имя геологического класса
+      name: geologicalClassName
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/GeologicalClassName'
+    GeologicalClassCode:
+      description: код геологического класса
+      name: geologicalClassCode
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/GeologicalClassCode'
+  responses:
+    Error_ServerError:
+      description: ошибка обработки запроса
+    Error_JobNotExist:
+      description: задача, удовлетворяющее запросу, на сервере отсутствует
+    ApiDoc:
+      description: документация по API (OpenAPI 3.0)
+      content:
+        'application/yaml':
+          schema:
+            type: string
+            format: binary
+    XlsFile:
+      description: XLS-файл, содержащий множество секций
+      content:
+        'application/vnd.ms-excel':
+          schema:
+            type: string
+            format: binary
+    JobId:
+      description: уникальный идентификатор задачи
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/JobId'
+    JobIdsArray:
+      description: множество уникальных идентификаторов задач
+      content:
+        'application/json':
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/JobId'
+    Job:
+      description: задача
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/Job'
+    JobsArray:
+      description: множество задач
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/JobsArray'
+    Section:
+      description: задача
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/Section'
+    SectionsArray:
+      description: множество секций
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/SectionsArray'
+    GeologicalClass:
+      description: геологический класс
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/GeologicalClass'
+    GeologicalClassesArray:
+      description: множество геологических классов
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/GeologicalClassesArray'    
+paths:
+  /api/:
+    get:
+      operationId: apiDoc
+      summary: получение документации по API
+      tags: [common]
+      responses:
+        200:
+          $ref: '#/components/responses/ApiDoc'
+        500:
+          $ref: '#/components/responses/Error_ServerError'
+  /api/jobs/:
+    get:
+      operationId: listAllJobs
+      summary: получение множества идентификаторов всех завершенных задач
+      tags: [jobs]
+      responses:
+        200:
+          $ref: '#/components/responses/JobIdsArray'
+        500:
+          $ref: '#/components/responses/Error_ServerError'
+    post:
+      operationId: addJob
+      summary: создание новой задачи на обработку XLS-файла
+      tags: [jobs]
+      requestBody:
+        description: XLS-файл, содержащий множество секций
+        required: true
+        content:
+          'application/vnd.ms-excel':
+            schema:
+              type: string
+              format: binary
+      responses:
+        200:
+          $ref: '#/components/responses/JobId'
+        500:
+          $ref: '#/components/responses/Error_ServerError'
+  /api/jobs/{jobId}/:
+    parameters:
+      - $ref: '#/components/parameters/JobId'
+    get:
+      operationId: getJob
+      summary: получение информации о завершенной задаче
+      tags: [jobs]
+      responses:
+        200:
+          $ref: '#/components/responses/Job'
+        404:
+          $ref: '#/components/responses/Error_JobNotExist'
+        500:
+          $ref: '#/components/responses/Error_ServerError'
+  /api/sections/filter:
+    parameters:
+      - $ref: '#/components/parameters/SectionName'
+      - $ref: '#/components/parameters/GeologicalClassName'
+      - $ref: '#/components/parameters/GeologicalClassCode'
+    get:
+      operationId: filterSections
+      summary: получение множества всех секций, удовлетворяющих условию
+      tags: [sections]
+      responses:
+        200:
+          $ref: '#/components/responses/SectionsArray'
+        500:
+          $ref: '#/components/responses/Error_ServerError'
+  /api/sections/export:
+    parameters:
+      - $ref: '#/components/parameters/SectionName'
+      - $ref: '#/components/parameters/GeologicalClassName'
+      - $ref: '#/components/parameters/GeologicalClassCode'
+    get:
+      operationId: exportSections
+      summary: экспорт в XLS множества всех секций, удовлетворяющих условию
+      tags: [sections]
+      responses:
+        200:
+          $ref: '#/components/responses/XlsFile'
+        500:
+          $ref: '#/components/responses/Error_ServerError'
