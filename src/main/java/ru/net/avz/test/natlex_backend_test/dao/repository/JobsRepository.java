@@ -28,7 +28,7 @@ public interface JobsRepository
      * @param geoClassCode значение-образец для {@link GeologicalClassPOJO#code()}
      * @return отфильтрованное (из <b>ВСЕХ</b> задач) множество секций
      */
-    @Query("SELECT S " +
+    @Query("SELECT DISTINCT S " +
                 "FROM SectionPOJO S " +
                 "INNER JOIN JobPOJO J ON J.id = S.job " +
                 "INNER JOIN GeologicalClassPOJO G ON G.section = S.id " +
