@@ -15,8 +15,12 @@ import javax.persistence.*;
 @Immutable
 @Entity
 //@Transactional
-@Table(name = "geo_classes")
+@Table(name = GeologicalClassPOJO.DB__TABLE,
+       indexes = { @Index(columnList = GeologicalClassPOJO.DB__KEY__NAME),
+                   @Index(columnList = GeologicalClassPOJO.JSON__KEY__CODE) })
 public class GeologicalClassPOJO {
+
+    static final String DB__TABLE                                   = "geo_classes";
 
     static final String DB__PK__ID                                  = "id";
     static final String DB__KEY__NAME                               = "name";

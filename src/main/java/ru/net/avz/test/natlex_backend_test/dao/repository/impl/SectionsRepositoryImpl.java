@@ -18,7 +18,7 @@ import javax.persistence.EntityManager;
  */
 @Primary
 @Repository
-public class SectionsRepositoryImpl
+public abstract class SectionsRepositoryImpl
         extends SimpleJpaRepository<SectionPOJO, Long>
         implements SectionsRepository {
 

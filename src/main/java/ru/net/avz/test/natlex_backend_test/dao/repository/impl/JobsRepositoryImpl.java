@@ -18,7 +18,7 @@ import javax.persistence.EntityManager;
  */
 @Primary
 @Repository
-public class JobsRepositoryImpl
+public abstract class JobsRepositoryImpl
         extends SimpleJpaRepository<JobPOJO, String>
         implements JobsRepository {
 

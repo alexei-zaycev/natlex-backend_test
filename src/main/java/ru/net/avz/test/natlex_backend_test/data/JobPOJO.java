@@ -15,8 +15,10 @@ import java.util.List;
 @Immutable
 @Entity
 //@Transactional
-@Table(name = "jobs")
+@Table(name = JobPOJO.DB__TABLE)
 public class JobPOJO {
+
+    static final String DB__TABLE                   = "jobs";
 
     static final String DB__PK__ID                  = "id";
     static final String DB__KEY__SECTIONS           = "sections";

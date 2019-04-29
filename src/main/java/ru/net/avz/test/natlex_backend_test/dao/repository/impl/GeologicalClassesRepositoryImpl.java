@@ -18,7 +18,7 @@ import javax.persistence.EntityManager;
  */
 @Primary
 @Repository
-public class GeologicalClassesRepositoryImpl
+public abstract class GeologicalClassesRepositoryImpl
         extends SimpleJpaRepository<GeologicalClassPOJO, Long>
         implements GeologicalClassesRepository {
 

@@ -18,7 +18,6 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -70,6 +69,26 @@ public class JobDAO {
     }
 
     /**
+     * @param jobId значение-образец для {@link JobPOJO#id()}
+     * @param sectionName значение-образец для {@link SectionPOJO#name()}
+     * @param geoClassName значение-образец для {@link GeologicalClassPOJO#name()}
+     * @param geoClassCode значение-образец для {@link GeologicalClassPOJO#code()}
+     * @return отфильтрованное (из <b>ВСЕХ</b> задач) множество секций
+     */
+    @Async
+    public @Nonnull CompletableFuture<Stream<SectionPOJO>> filterSectionsForAllJobs(
+            @Nullable String jobId,
+            @Nullable String sectionName,
+            @Nullable String geoClassName,
+            @Nullable String geoClassCode) {
+
+        return CompletableFuture.completedFuture(
+                jobsRepository.findSections(jobId, sectionName, geoClassName, geoClassCode)
+                              .stream());
+    }
+
+    /**
+     * @param jobIdPredicate условие фильтрации для {@link JobPOJO#id()}
      * @param sectionNamePredicate условие фильтрации для {@link SectionPOJO#name()}
      * @param geoClassNamePredicate условие фильтрации для {@link GeologicalClassPOJO#name()}
      * @param geoClassCodePredicate условие фильтрации для {@link GeologicalClassPOJO#code()}
@@ -77,38 +96,39 @@ public class JobDAO {
      */
     @Async
     public @Nonnull CompletableFuture<Stream<SectionPOJO>> filterSectionsForAllJobs(
+            @Nullable Predicate<String> jobIdPredicate,
             @Nullable Predicate<String> sectionNamePredicate,
             @Nullable Predicate<String> geoClassNamePredicate,
             @Nullable Predicate<String> geoClassCodePredicate) {
 
         @Nullable Stream<SectionPOJO> sections = null;
 
+        if (jobIdPredicate != null) {
+
+            sections = StreamSupport.stream(jobsRepository.findAll().spliterator(), true)
+                                    .filter(job -> jobIdPredicate.test(job.id()))
+                                    .flatMap(job -> job.sections().parallelStream());
+        }
+
         if (sectionNamePredicate != null) {
 
-            sections = StreamSupport.stream(sectionsRepository.findAll().spliterator(), true)
-                                    .filter(section -> sectionNamePredicate.test(section.name()));
+            if (sections == null)
+                sections = StreamSupport.stream(sectionsRepository.findAll().spliterator(), true);
+
+            sections = sections.filter(section -> sectionNamePredicate.test(section.name()));
         }
 
         if (geoClassNamePredicate != null || geoClassCodePredicate != null) {
 
-            Stream<GeologicalClassPOJO> geologicalClasses =
-                    sections != null
-                            ? sections.flatMap(section -> section.geologicalClasses().parallelStream())
-                            : StreamSupport.stream(geologicalClassesRepository.findAll().spliterator(), true);
+            if (sections == null)
+                sections = StreamSupport.stream(sectionsRepository.findAll().spliterator(), true);
 
-            sections = geologicalClasses
-                            .filter(geoClass -> geoClassNamePredicate == null || geoClassNamePredicate.test(geoClass.name()))
-                            .filter(geoClass -> geoClassCodePredicate == null || geoClassCodePredicate.test(geoClass.code()))
-                            .map(GeologicalClassPOJO::section)
-                            .collect(Collectors.groupingBy(SectionPOJO::id))    // надо избавиться от дублей из-за 1:N
-                            .values()
-                            .stream()
-                            .map(list -> list.get(0));
+            sections = sections.filter(section -> section.geologicalClasses().parallelStream()
+                                                         .anyMatch(geoClass -> (geoClassNamePredicate == null || geoClassNamePredicate.test(geoClass.name()))
+                                                                                && (geoClassCodePredicate == null || geoClassCodePredicate.test(geoClass.code()))));
         }
 
-        if (sections == null) {
-            sections = StreamSupport.stream(sectionsRepository.findAll().spliterator(), true);
-        }
+        assert sections != null;
 
         return CompletableFuture.completedFuture(sections);
     }

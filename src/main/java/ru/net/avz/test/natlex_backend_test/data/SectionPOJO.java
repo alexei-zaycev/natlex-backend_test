@@ -16,8 +16,11 @@ import java.util.List;
 @Immutable
 @Entity
 //@Transactional
-@Table(name = "sections")
+@Table(name = SectionPOJO.DB__TABLE,
+       indexes = @Index(columnList = SectionPOJO.DB__KEY__NAME))
 public class SectionPOJO {
+
+    static final String DB__TABLE                               = "sections";
 
     static final String DB__PK__ID                              = "id";
     static final String DB__KEY__NAME                           = "name";
