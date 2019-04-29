@@ -36,7 +36,7 @@ public interface JobsRepository
                        "AND (:sectionName IS NULL OR S.name = :sectionName) " +
                        "AND (:geoClassName IS NULL OR G.name = :geoClassName) " +
                        "AND (:geoClassCode IS NULL OR G.code = :geoClassCode) ")
-    @Nonnull List<SectionPOJO> findSections(
+    @Nonnull List<SectionPOJO> findAllSectionsByFilters(
             @Param("jobId") @Nullable String jobId,
             @Param("sectionName") @Nullable String sectionName,
             @Param("geoClassName") @Nullable String geoClassName,

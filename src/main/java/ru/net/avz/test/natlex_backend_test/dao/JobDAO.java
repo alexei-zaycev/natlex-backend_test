@@ -76,14 +76,14 @@ public class JobDAO {
      * @return отфильтрованное (из <b>ВСЕХ</b> задач) множество секций
      */
     @Async
-    public @Nonnull CompletableFuture<Stream<SectionPOJO>> filterSectionsForAllJobs(
+    public @Nonnull CompletableFuture<Stream<SectionPOJO>> findAllSectionsByFilters(
             @Nullable String jobId,
             @Nullable String sectionName,
             @Nullable String geoClassName,
             @Nullable String geoClassCode) {
 
         return CompletableFuture.completedFuture(
-                jobsRepository.findSections(jobId, sectionName, geoClassName, geoClassCode)
+                jobsRepository.findAllSectionsByFilters(jobId, sectionName, geoClassName, geoClassCode)
                               .stream());
     }
 
@@ -95,7 +95,7 @@ public class JobDAO {
      * @return отфильтрованное (из <b>ВСЕХ</b> задач) множество секций
      */
     @Async
-    public @Nonnull CompletableFuture<Stream<SectionPOJO>> filterSectionsForAllJobs(
+    public @Nonnull CompletableFuture<Stream<SectionPOJO>> findAllSectionsByFilters(
             @Nullable Predicate<String> jobIdPredicate,
             @Nullable Predicate<String> sectionNamePredicate,
             @Nullable Predicate<String> geoClassNamePredicate,

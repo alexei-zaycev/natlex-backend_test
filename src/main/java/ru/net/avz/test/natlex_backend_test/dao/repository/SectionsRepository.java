@@ -23,7 +23,7 @@ public interface SectionsRepository
      * @return отфильтрованное множество секций
      */
     @Query("SELECT S FROM SectionPOJO S WHERE S.name = :name")
-    List<SectionPOJO> findByName(
+    List<SectionPOJO> findAllByName(
             @Param("name") @Nonnull String name);
 
 }

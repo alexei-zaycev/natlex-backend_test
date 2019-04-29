@@ -42,7 +42,7 @@ public class SectionsController {
             @RequestParam(name = "geoClassName", required = false) @Nullable String geoClassName,
             @RequestParam(name = "geoClassCode", required = false) @Nullable String geoClassCode) {
 
-        return jobDAO.filterSectionsForAllJobs(jobId, sectionName, geoClassName, geoClassCode);
+        return jobDAO.findAllSectionsByFilters(jobId, sectionName, geoClassName, geoClassCode);
     }
 
     @GetMapping(path = "/export",
@@ -53,7 +53,7 @@ public class SectionsController {
             @RequestParam(name = "geoClassName", required = false) @Nullable String geoClassName,
             @RequestParam(name = "geoClassCode", required = false) @Nullable String geoClassCode) {
 
-        return jobDAO.filterSectionsForAllJobs(jobId, sectionName, geoClassName, geoClassCode)
+        return jobDAO.findAllSectionsByFilters(jobId, sectionName, geoClassName, geoClassCode)
                      .thenCompose(jobService::buildXLS)
                      .thenApply(HSSFWorkbook::getBytes)
                      .thenApply(bytes -> ResponseEntity.ok()

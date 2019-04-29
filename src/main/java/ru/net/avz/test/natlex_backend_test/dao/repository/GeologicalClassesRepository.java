@@ -23,7 +23,7 @@ public interface GeologicalClassesRepository
      * @return отфильтрованное множество гео-классов
      */
     @Query("SELECT G FROM GeologicalClassPOJO G WHERE G.name = :name")
-    List<GeologicalClassPOJO> findByName(
+    List<GeologicalClassPOJO> findAllByName(
             @Param("name") @Nonnull String name);
 
     /**
@@ -31,7 +31,7 @@ public interface GeologicalClassesRepository
      * @return отфильтрованное множество гео-классов
      */
     @Query("SELECT G FROM GeologicalClassPOJO G WHERE G.code = :code")
-    List<GeologicalClassPOJO> findByCode(
+    List<GeologicalClassPOJO> findAllByCode(
             @Param("code") @Nonnull String code);
 
     /**
@@ -40,7 +40,7 @@ public interface GeologicalClassesRepository
      * @return отфильтрованное множество гео-классов
      */
     @Query("SELECT G FROM GeologicalClassPOJO G WHERE G.name = :name AND G.code = :code")
-    List<GeologicalClassPOJO> findByNameAndCode(
+    List<GeologicalClassPOJO> findAllByNameAndCode(
             @Param("name") @Nonnull String name,
             @Param("code") @Nonnull String code);
 
