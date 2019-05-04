@@ -2,6 +2,7 @@ package ru.net.avz.test.natlex_backend_test.api;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,9 @@ import ru.net.avz.test.natlex_backend_test.Utils;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+
+import static ru.net.avz.test.natlex_backend_test.config.WebSecurityConfig.ROLE__ADMIN;
+import static ru.net.avz.test.natlex_backend_test.config.WebSecurityConfig.ROLE__USER;
 
 /**
  * 
@@ -22,6 +26,7 @@ public class ApiDocController {
 
     private static final String API_SPEC_FILENAME = "api.yaml";
 
+    @Secured({ROLE__USER, ROLE__ADMIN})
     @GetMapping(path = "",
                 produces = Utils.MEDIA_TYPE__APPLICATION_YAML__VALUE)
     public @ResponseBody @Nonnull ResponseEntity<byte[]> filterSections()

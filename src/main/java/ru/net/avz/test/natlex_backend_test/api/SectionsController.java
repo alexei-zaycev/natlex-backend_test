@@ -4,6 +4,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ru.net.avz.test.natlex_backend_test.Utils;
 import ru.net.avz.test.natlex_backend_test.dao.JobDAO;
@@ -14,6 +15,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
+
+import static ru.net.avz.test.natlex_backend_test.config.WebSecurityConfig.ROLE__ADMIN;
+import static ru.net.avz.test.natlex_backend_test.config.WebSecurityConfig.ROLE__USER;
 
 /**
  * 
@@ -34,6 +38,7 @@ public class SectionsController {
         this.jobService = Utils.requireDI(JobService.class, jobService);
     }
 
+    @Secured({ROLE__USER, ROLE__ADMIN})
     @GetMapping(path = "/filter",
                 produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody @Nonnull CompletableFuture<Stream<SectionPOJO>> filterSections(
@@ -45,6 +50,7 @@ public class SectionsController {
         return jobDAO.findAllSectionsByFilters(jobId, sectionName, geoClassName, geoClassCode);
     }
 
+    @Secured({ROLE__USER, ROLE__ADMIN})
     @GetMapping(path = "/export",
                 produces = Utils.MEDIA_TYPE__APPLICATION_XLS__VALUE)
     public @ResponseBody @Nonnull CompletableFuture<ResponseEntity<byte[]>> exportSections(

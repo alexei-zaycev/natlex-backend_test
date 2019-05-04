@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
@@ -14,17 +15,18 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @EnableAsync
 @EnableJpaRepositories
 //@EnableTransactionManagement
+@EnableWebMvc
 @SpringBootApplication
 public class App {
-
-    @Bean    // игнорируем завершающие '/' в конце урлов
-    public RequestMappingHandlerMapping useTrailingSlash() {
-        return new RequestMappingHandlerMapping() {{ setUseTrailingSlashMatch(true); }};
-    }
 
     public static void main(String[] args) {
 
         SpringApplication.run(App.class, args);
+    }
+
+    @Bean    // игнорируем завершающие '/' в конце урлов
+    public RequestMappingHandlerMapping useTrailingSlash() {
+        return new RequestMappingHandlerMapping() {{ setUseTrailingSlashMatch(true); }};
     }
 
 }

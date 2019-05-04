@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>natlex_backend_test / add job</title>
+</head>
+<body>
+
+<div th:if="${message}">
+    <p th:text="${message}"/>
+</div>
+
+<br/>
+<br/>
+
+<form enctype="multipart/form-data" th:action="@{''}" method="POST">
+    <table>
+        <tr>
+            <td>file:</td>
+            <td><input type="file" name="file" /></td></tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Upload" /></td></tr>
+    </table>
+</form>
+
+</body>
+</html>

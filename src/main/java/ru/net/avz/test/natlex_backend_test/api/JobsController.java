@@ -23,7 +23,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import static ru.net.avz.test.natlex_backend_test.security.WebSecurityConfig.ROLE__ADMIN;
+import static ru.net.avz.test.natlex_backend_test.config.WebSecurityConfig.ROLE__ADMIN;
+import static ru.net.avz.test.natlex_backend_test.config.WebSecurityConfig.ROLE__USER;
 
 /**
  * 
@@ -44,6 +45,7 @@ public class JobsController {
         this.jobService = Utils.requireDI(JobService.class, jobService);
     }
 
+    @Secured({ROLE__USER, ROLE__ADMIN})
     @GetMapping(path = "",
                 produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody @Nonnull CompletableFuture<Stream<String>> listAllJobs() {
@@ -52,6 +54,7 @@ public class JobsController {
                      .thenApply(jobs -> jobs.map(JobPOJO::id));
     }
 
+    @Secured({ROLE__USER, ROLE__ADMIN})
     @GetMapping(path = "/{jobId}",
                 produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody @Nonnull ResponseEntity<JobPOJO> getJob(
