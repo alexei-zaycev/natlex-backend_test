@@ -1,12 +1,15 @@
 package ru.net.avz.test.natlex_backend_test.data;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -28,18 +31,18 @@ public class JobPOJO {
 
     @Id
     @Column(name = DB__PK__ID, unique = true, nullable = false)
-    @Nonnull private volatile String id;
+    @Nullable private volatile String id;
 
     @OneToMany(targetEntity = SectionPOJO.class, mappedBy = SectionPOJO.DB__FK__JOB, cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(name = DB__KEY__SECTIONS, nullable = false)
-    @Nonnull private volatile List<SectionPOJO> sections;
+    @Nullable private volatile List<SectionPOJO> sections;
 
-    JobPOJO() {
-    }
+    protected JobPOJO() {}
 
+    @JsonCreator
     public JobPOJO(
-            @Nonnull String id,
-            @Nonnull List<SectionPOJO> sections) {
+            @JsonProperty(JSON__KEY__ID) @Nonnull String id,
+            @JsonProperty(JSON__KEY__SECTIONS) @Nonnull List<SectionPOJO> sections) {
 
         assert id != null : "<id> is null";
         assert sections != null : "<sections> is null";
@@ -47,17 +50,22 @@ public class JobPOJO {
         this.id = id;
         this.sections = List.copyOf(sections);
 
-        this.sections.forEach(section -> section.job = JobPOJO.this);
+        sections.forEach(section -> {
+
+            assert section.job == null;
+
+            section.job = JobPOJO.this;
+        });
     }
 
     @JsonProperty(JSON__KEY__ID)
     public @Nonnull String id() {
-        return id;
+        return Objects.requireNonNull(id);
     }
 
     @JsonProperty(JSON__KEY__SECTIONS)
     public @Nonnull List<SectionPOJO> sections() {
-        return sections;
+        return Objects.requireNonNull(sections);
     }
 
     @Override

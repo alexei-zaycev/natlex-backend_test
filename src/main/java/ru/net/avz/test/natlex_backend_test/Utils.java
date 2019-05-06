@@ -7,6 +7,8 @@ import org.springframework.http.MediaType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  *
@@ -44,6 +46,22 @@ public final class Utils {
             throw new NullPointerException(
                     String.format("inject failed: <%s>", instClass));
         }
+    }
+
+    /**
+     * @param elements множество элементов
+     * @return хэш последовательности элементов, игнорируя их порядок
+     */
+    public static <T> int elementsHashWithIgnoreOrder(
+            @Nonnull Stream<T> elements) {
+
+        assert elements != null : "<elements> is null";
+
+        return elements
+                .sequential()
+                .mapToInt(Objects::hashCode)
+                .sorted()
+                .reduce(1, (accumulator, value) -> 31 * accumulator + Integer.hashCode(value));
     }
 
     private Utils() {}

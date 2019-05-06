@@ -58,7 +58,7 @@ public class FilterSectionsController {
                                 StringUtils.isEmpty(sectionName) ? null : sectionName,
                                 StringUtils.isEmpty(geoClassName) ? null : geoClassName,
                                 StringUtils.isEmpty(geoClassCode) ? null : geoClassCode)
-                         .thenApply(sections -> sections.collect(Collectors.toList()))
+                         .thenApply(sections -> sections.collect(Collectors.toUnmodifiableList()))
                          .thenApply(sections -> {
 
                                 model.addAttribute("jobId", jobId)

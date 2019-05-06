@@ -31,6 +31,8 @@
         <version.spring>5.1.6.RELEASE</version.spring>
         <version.apache.derby>10.14.2.0</version.apache.derby>
         <version.apache.poi>4.1.0</version.apache.poi>
+        
+        <version.awaitility>3.1.6</version.awaitility>
 
     </properties>
 
@@ -246,6 +248,26 @@
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <version>${version.spring.boot}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+            <!--<version>${version.spring}</version>-->
+            <version>5.1.5.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+            <version>${version.awaitility}</version>
         </dependency>
 
         <dependency>

@@ -26,6 +26,27 @@ public class WebSecurityConfig
 
     @Autowired private BasicAuthenticationEntryPoint authEntryPoint;
 
+    @Override
+    protected void configure(
+            HttpSecurity http)
+            throws Exception {
+
+        http.csrf()
+                .disable();
+
+        http.authorizeRequests()
+                .anyRequest()
+                .authenticated();
+
+        http.httpBasic()
+                .authenticationEntryPoint(Utils.requireDI(BasicAuthenticationEntryPoint.class, authEntryPoint));
+
+        http.logout()
+                .permitAll()
+                .deleteCookies("remove")
+                .invalidateHttpSession(true);
+    }
+
     @Autowired
     public void configureGlobal(
             AuthenticationManagerBuilder auth)
@@ -34,23 +55,6 @@ public class WebSecurityConfig
         auth.inMemoryAuthentication()
                 .withUser("admin").password(passwordEncoder().encode("admin")).roles(ROLE__ADMIN, ROLE__USER).and()
                 .withUser("user").password(passwordEncoder().encode("user")).roles(ROLE__USER);
-//            .withUser("admin").password(passwordEncoder().encode("admin")).authorities(ROLE__ADMIN, ROLE__USER).and()
-//            .withUser("user").password(passwordEncoder().encode("user")).authorities(ROLE__USER);
-    }
-
-    @Override
-    protected void configure(
-            HttpSecurity http)
-            throws Exception {
-
-        http.csrf().disable()
-            .authorizeRequests()
-                .antMatchers("/**").hasRole(ROLE__USER)
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic().authenticationEntryPoint(Utils.requireDI(BasicAuthenticationEntryPoint.class, authEntryPoint))
-                .and()
-                .logout().logoutUrl("/logout").invalidateHttpSession(true);
     }
 
     @Bean

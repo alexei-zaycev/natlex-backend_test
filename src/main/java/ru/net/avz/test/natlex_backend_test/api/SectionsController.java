@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.net.avz.test.natlex_backend_test.Utils;
 import ru.net.avz.test.natlex_backend_test.dao.JobDAO;
@@ -47,7 +48,11 @@ public class SectionsController {
             @RequestParam(name = "geoClassName", required = false) @Nullable String geoClassName,
             @RequestParam(name = "geoClassCode", required = false) @Nullable String geoClassCode) {
 
-        return jobDAO.findAllSectionsByFilters(jobId, sectionName, geoClassName, geoClassCode);
+        return jobDAO.findAllSectionsByFilters(
+                                StringUtils.isEmpty(jobId) ? null : jobId,
+                                StringUtils.isEmpty(sectionName) ? null : sectionName,
+                                StringUtils.isEmpty(geoClassName) ? null : geoClassName,
+                                StringUtils.isEmpty(geoClassCode) ? null : geoClassCode);
     }
 
     @Secured({ROLE__USER, ROLE__ADMIN})
@@ -59,7 +64,11 @@ public class SectionsController {
             @RequestParam(name = "geoClassName", required = false) @Nullable String geoClassName,
             @RequestParam(name = "geoClassCode", required = false) @Nullable String geoClassCode) {
 
-        return jobDAO.findAllSectionsByFilters(jobId, sectionName, geoClassName, geoClassCode)
+        return jobDAO.findAllSectionsByFilters(
+                            StringUtils.isEmpty(jobId) ? null : jobId,
+                            StringUtils.isEmpty(sectionName) ? null : sectionName,
+                            StringUtils.isEmpty(geoClassName) ? null : geoClassName,
+                            StringUtils.isEmpty(geoClassCode) ? null : geoClassCode)
                      .thenCompose(jobService::buildXLS)
                      .thenApply(HSSFWorkbook::getBytes)
                      .thenApply(bytes -> ResponseEntity.ok()

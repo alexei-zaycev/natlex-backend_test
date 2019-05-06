@@ -1,12 +1,15 @@
 package ru.net.avz.test.natlex_backend_test.data;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.core.style.ToStringCreator;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * 
@@ -31,28 +34,27 @@ public class GeologicalClassPOJO {
     public static final String JSON__KEY__NAME                      = DB__KEY__NAME;
     public static final String JSON__KEY__CODE                      = DB__KEY__CODE;
 
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = DB__PK__ID, unique = true, nullable = false)
-    @Nonnull private volatile Long id;
+    @Nullable private volatile Long id;
 
     @Column(name = DB__KEY__NAME, nullable = false)
-    @Nonnull private volatile String name;
+    @Nullable private volatile String name;
 
     @Column(name = DB__KEY__CODE, nullable = false)
-    @Nonnull private volatile String code;
+    @Nullable private volatile String code;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = DB__KEY__SECTION, nullable = false)
-    @Nonnull volatile SectionPOJO section;
+    @Nullable protected volatile SectionPOJO section;
 
-    GeologicalClassPOJO() {
-    }
+    protected GeologicalClassPOJO() {}
 
+    @JsonCreator
     public GeologicalClassPOJO(
-            @Nonnull String name,
-            @Nonnull String code) {
+            @JsonProperty(JSON__KEY__NAME) @Nonnull String name,
+            @JsonProperty(DB__KEY__CODE) @Nonnull String code) {
 
         assert name != null : "<name> is null";
         assert code != null : "<code> is null";
@@ -62,22 +64,22 @@ public class GeologicalClassPOJO {
     }
 
     @JsonIgnore
-    public @Nonnull Long id() {
+    protected @Nullable Long id() {
         return id;
     }
 
     @JsonProperty(JSON__KEY__NAME)
     public @Nonnull String name() {
-        return name;
+        return Objects.requireNonNull(name);
     }
 
     @JsonProperty(JSON__KEY__CODE)
     public @Nonnull String code() {
-        return code;
+        return Objects.requireNonNull(code);
     }
 
     @JsonIgnore
-    public @Nonnull SectionPOJO section() {
+    protected @Nullable SectionPOJO section() {
         return section;
     }
 
